@@ -7,7 +7,7 @@ assets = []
 count = 0
 
 
-def gather_all_assets():
+def gather_assets():
     """Gathers assets from socrata for metadata generation and compiles a list."""
     global count
     global assets
@@ -17,15 +17,16 @@ def gather_all_assets():
 
     for item in r['results']:
         try:
-            assets.append({item['resource']['id']: (item['resource']['name'],  # name
-                                                    item['classification']['domain_metadata'][0]['value'],  # department
-                                                    item['resource']['type'],  # type
-                                                    item['resource']['createdAt'].split('-')[0],  # publication year
-                                                    item['permalink'],  # permalink
-                                                    item['resource']['description']  # description
-                                                    )
-                            }
-                           )
+            if item['resource']['type'] == 'dataset':
+                assets.append({item['resource']['id']: (item['resource']['name'],  # name
+                                                        item['classification']['domain_metadata'][0]['value'],  # department
+                                                        item['resource']['type'],  # type
+                                                        item['resource']['createdAt'].split('-')[0],  # publication year
+                                                        item['permalink'],  # permalink
+                                                        item['resource']['description']  # description
+                                                        )
+                                }
+                               )
         except IndexError:
             count +=1
     return assets
@@ -33,6 +34,7 @@ def gather_all_assets():
 
 if __name__ == "__main__":
     result_assets = gather_all_assets()
+    print(len(result_assets))
     print("{} assets do not contain metadata".format(count))
     for asset in result_assets[:5]:
         print(asset)
