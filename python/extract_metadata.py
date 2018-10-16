@@ -33,7 +33,7 @@ def gather_assets():
 
 
 if __name__ == "__main__":
-    result_assets = gather_all_assets()
+    result_assets = gather_assets()
     print(len(result_assets))
     print("{} assets do not contain metadata".format(count))
     for asset in result_assets[:5]:
