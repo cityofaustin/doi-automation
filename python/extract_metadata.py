@@ -1,5 +1,7 @@
 import requests
-# import os
+import psycopg2
+# import base64
+import os
 # import json
 # import xmlrpc.client
 
@@ -8,7 +10,7 @@ count = 0
 
 
 def gather_assets():
-    """Gathers assets from socrata for metadata generation and compiles a list."""
+    """Gathers assets from socrata for metadata generation and compiles a dictionary of tuples."""
     global count
     global assets
     # limits query to 2000 results
@@ -32,9 +34,15 @@ def gather_assets():
     return assets
 
 
+def load_db():
+    conn = psycopg2.connect(host="localhost", database="citation-station", user=os.environ['postgres_user'],
+                            password=os.environ['postgres_pass'])
+
+
 if __name__ == "__main__":
     result_assets = gather_assets()
     print(len(result_assets))
     print("{} assets do not contain metadata".format(count))
-    for asset in result_assets[:5]:
+    for asset in result_assets[:50]:
+        # print(asset)
         print(asset)
