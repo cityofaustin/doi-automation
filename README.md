@@ -1,6 +1,10 @@
-# doi-automation
-This project's goal is to explore and implement automation for DataCite DOI integration with the 
-Socrata Open Data portal. This will be done by integrating the DataCite API with Socrata's Discovery API to manage metadata.
+# DOI Automation
+
+Datacite (https://en.wikipedia.org/wiki/DataCite) is a non profit organization which provides an easy way to access datasets online.
+The City of Austin would like to use this organization's tools to give the public a simple and effective way to cite our open data for any use.
+
+This project's goal is to explore and implement an integration for DataCite's citation archives with the 
+Socrata Open Data portal. This will be done by developing automation to synchronize datacite's DOI archive with the City of Austin's socrata portal assets and metadata.
 
 Socrata Discovery API:
 https://socratadiscovery.docs.apiary.io/#
@@ -14,12 +18,19 @@ https://support.datacite.org/docs/api
 
 https://www.python.org/downloads/release/python-360/
 
-# Install python requests library
+# _Install PostgreSQL_:
+
+https://www.postgresql.org/
+# _Python dependencies_
+
+requests:
 
 http://docs.python-requests.org/en/master/
 
-# Clone this repository
+psycopg2:
 
-'''
-git clone https://github.austintexas.gov/montgomeryt/doi-automation.git
-'''
+http://initd.org/psycopg/
+
+# _Clone this repository_
+
+git clone https://github.com/tom-montgomery/doi-automation.git
