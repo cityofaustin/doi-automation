@@ -20,23 +20,19 @@ def gather_assets():
     for item in r['results']:
         try:
             if item['resource']['type'] == 'dataset':
-                assets.append({item['resource']['id']: (item['resource']['name'],  # name
-                                                        item['classification']['domain_metadata'][0]['value'],  # department
-                                                        item['resource']['type'],  # type
-                                                        item['resource']['createdAt'].split('-')[0],  # publication year
-                                                        item['permalink'],  # permalink
-                                                        item['resource']['description']  # description
-                                                        )
-                                }
-                               )
+                assets.append({'socrata_4x4': item['resource']['id'], 'name': item['resource']['name'],
+                               'department': item['classification']['domain_metadata'][0]['value'],
+                               'type': item['resource']['type'],  'year': item['resource']['createdAt'].split('-')[0],
+                               'permalink': item['permalink'], 'desc': item['resource']['description']})
+
         except IndexError:
             count +=1
     return assets
 
 
 def load_db():
-    conn = psycopg2.connect(host="localhost", database="citation-station", user=os.environ['postgres_user'],
-                            password=os.environ['postgres_pass'])
+    conn = psycopg2.connect(host="localhost", database="citation-station", user=os.environ['postgres_user'],password=os.environ['postgres_pass'])
+    cur = conn.cursor()
 
 
 if __name__ == "__main__":
