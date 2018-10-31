@@ -49,23 +49,41 @@ def load_temp_table(temp_assets):
                             user=os.environ['postgres_user'],
                             password=os.environ['postgres_pass'])
     cur = conn.cursor()
-
+    # create temp table
     tbl_statement = """CREATE TEMPORARY TABLE temp_socrata_asset_metadata(
-                 ) INHERITS (socrata_asset_metadata)"""
+                        PRIMARY KEY (socrata_4x4)) 
+                        INHERITS (socrata_asset_metadata)"""
     cur.execute(tbl_statement)
 
+    # insert list of dictionaries into temp table
     cur.executemany("""INSERT INTO temp_socrata_asset_metadata(socrata_4x4,name,department,type,year,permalink,"desc")
                           VALUES (%(socrata_4x4)s, %(name)s, %(department)s, %(type)s, %(year)s, %(permalink)s, %(desc)s)""", temp_assets)
     conn.commit()
     cur.close()
-    conn.close()
+    return conn
+
+
+def diff_temp_table(conn):
+    cur = conn.cursor()
+    diff_query = """(   SELECT * FROM temp_socrata_asset_metadata
+                        EXCEPT
+                        SELECT * FROM socrata_asset_metadata)  
+                    UNION ALL
+                    (   SELECT * FROM socrata_asset_metadata
+                        EXCEPT
+                        SELECT * FROM temp_socrata_asset_metadata) """
+    cur.execute(diff_query)
+    return cur.fetchall()
 
 
 if __name__ == "__main__":
+
     result_assets = gather_assets()
-    load_temp_table(result_assets)
+    connection = load_temp_table(result_assets)
+    diff = diff_temp_table(connection)
+
     print(len(result_assets))
-    print("{} assets do not contain metadata".format(count))
-    depts = []
+    for d in diff:
+        print(d)
     for asset in result_assets:
         print(asset)
