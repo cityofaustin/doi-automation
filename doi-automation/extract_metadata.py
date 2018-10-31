@@ -42,26 +42,28 @@ def gather_assets():
     return assets
 
 
-def load_temp_table():
+def load_temp_table(temp_assets):
     """Load list of dictionaries into temp table in database for diff"""
     # use env variables for credentials
     conn = psycopg2.connect(host="localhost", database="citation-station",
                             user=os.environ['postgres_user'],
                             password=os.environ['postgres_pass'])
-    cursor = conn.cursor()
+    cur = conn.cursor()
 
-    tbl_sql = """CREATE TEMPORARY TABLE temp_socrata_asset_metadata(
+    tbl_statement = """CREATE TEMPORARY TABLE temp_socrata_asset_metadata(
                  ) INHERITS (socrata_asset_metadata)"""
-    columns = assets[0].keys()
-    values = [asset[column] for column in columns]
+    cur.execute(tbl_statement)
 
-    insert_statement = 'INSERT INTO temp_socrata_asset_metadata (%s) values %s'
-    cursor.execute(insert_statement, (AsIs(','.join(columns)), tuple(values)))
-
+    cur.executemany("""INSERT INTO temp_socrata_asset_metadata(socrata_4x4,name,department,type,year,permalink,"desc")
+                          VALUES (%(socrata_4x4)s, %(name)s, %(department)s, %(type)s, %(year)s, %(permalink)s, %(desc)s)""", temp_assets)
+    conn.commit()
+    cur.close()
+    conn.close()
 
 
 if __name__ == "__main__":
     result_assets = gather_assets()
+    load_temp_table(result_assets)
     print(len(result_assets))
     print("{} assets do not contain metadata".format(count))
     depts = []
