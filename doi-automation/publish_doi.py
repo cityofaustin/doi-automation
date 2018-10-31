@@ -19,18 +19,12 @@ def assemble_payload(socrata_4x4):
     metadata = cur.fetchall()
 
     # figure out which department prefix to use
-    select_dept_prefix = """SELECT prefix
-                                FROM
-                            dept_prefixes
-                                WHERE name = '{}'""".format(metadata[0][2])
+    select_dept_prefix = """SELECT prefix FROM dept_prefixes WHERE name = '{}'""".format(metadata[0][2])
     cur.execute(select_dept_prefix)
     dept_prefix = cur.fetchall()
 
     # figure out next doi suffix to use
-    select_department_dois = """SELECT * 
-                                    FROM
-                                doi_assets
-                                    WHERE department = '{}'""".format(metadata[0][2])
+    select_department_dois = """SELECT * FROM doi_assets WHERE department = '{}'""".format(metadata[0][2])
     cur.execute(select_department_dois)
     department_dois = cur.fetchall()
 
