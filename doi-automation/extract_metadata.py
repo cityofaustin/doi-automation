@@ -1,5 +1,6 @@
 import requests
 import psycopg2
+from psycopg2.extensions import AsIs
 # import base64
 import os
 # import json
@@ -27,7 +28,8 @@ def gather_assets():
                         department = dictionary['value']
             # assemble dictionary and append to asset list
             if item['resource']['type'] == 'dataset':
-                assets.append({'socrata_4x4': item['resource']['id'], 'name': item['resource']['name'],
+                assets.append({'socrata_4x4': item['resource']['id'],
+                               'name': item['resource']['name'],
                                'department': department,
                                'type': item['resource']['type'],
                                'year': item['resource']['createdAt'].split('-')[0],
@@ -40,16 +42,28 @@ def gather_assets():
     return assets
 
 
-def load_db():
+def load_temp_table():
     """Load list of dictionaries into temp table in database for diff"""
     # use env variables for credentials
-    conn = psycopg2.connect(host="localhost", database="citation-station", user=os.environ['postgres_user'],password=os.environ['postgres_pass'])
-    cur = conn.cursor()
+    conn = psycopg2.connect(host="localhost", database="citation-station",
+                            user=os.environ['postgres_user'],
+                            password=os.environ['postgres_pass'])
+    cursor = conn.cursor()
+
+    tbl_sql = """CREATE TEMPORARY TABLE temp_socrata_asset_metadata(
+                 ) INHERITS (socrata_asset_metadata)"""
+    columns = assets[0].keys()
+    values = [asset[column] for column in columns]
+
+    insert_statement = 'INSERT INTO temp_socrata_asset_metadata (%s) values %s'
+    cursor.execute(insert_statement, (AsIs(','.join(columns)), tuple(values)))
+
 
 
 if __name__ == "__main__":
     result_assets = gather_assets()
     print(len(result_assets))
     print("{} assets do not contain metadata".format(count))
+    depts = []
     for asset in result_assets:
-        print (asset)
+        print(asset)
