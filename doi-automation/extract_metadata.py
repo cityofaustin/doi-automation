@@ -19,9 +19,13 @@ def gather_assets():
 
     for item in r['results']:
         try:
+            for dictionary in item['classification']['domain_metadata']:
+                for key in dictionary.keys():
+                    if 'Department' in dictionary['key']:
+                        department = dictionary['value']
             if item['resource']['type'] == 'dataset':
                 assets.append({'socrata_4x4': item['resource']['id'], 'name': item['resource']['name'],
-                               'department': item['classification']['domain_metadata'][0]['value'],
+                               'department': department,
                                'type': item['resource']['type'],  'year': item['resource']['createdAt'].split('-')[0],
                                'permalink': item['permalink'], 'desc': item['resource']['description']})
 
@@ -36,8 +40,9 @@ def load_db():
 
 
 if __name__ == "__main__":
+    import csv
     result_assets = gather_assets()
     print(len(result_assets))
     print("{} assets do not contain metadata".format(count))
     for asset in result_assets:
-        print(asset)
+        print (asset)
