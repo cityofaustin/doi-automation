@@ -1,9 +1,7 @@
 import requests
 import psycopg2
-from psycopg2.extensions import AsIs
 # import base64
 import os
-# import json
 # import xmlrpc.client
 
 assets = []
@@ -38,7 +36,7 @@ def gather_assets():
 
         except IndexError:
             # count assets that do not have fields above by throwing an IndexError
-            count +=1
+            count += 1
     return assets
 
 
@@ -64,6 +62,7 @@ def load_temp_table(temp_assets):
 
 
 def diff_temp_table(conn):
+    """Perform diff of newly retrieved socrata assets against in temp table against static table."""
     cur = conn.cursor()
     diff_query = """(   SELECT * FROM temp_socrata_asset_metadata
                         EXCEPT
