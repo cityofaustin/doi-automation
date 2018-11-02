@@ -26,6 +26,10 @@ https://www.python.org/downloads/release/python-360/
 # _Install PostgreSQL_:
 
 https://www.postgresql.org/
+
+
+
+
 # _Python dependencies_
 
 requests:
@@ -45,5 +49,5 @@ pip install psycopg2
 # _Clone this repository_
 
 ```
-git clone https://github.com/cityofaustin/doi-automation
+git clone https://github.com/cityofaustin/doi-automation.git
 ```
