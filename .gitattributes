@@ -1,1 +1,2 @@
-doi-automation/postgres* linguist-backup
+* linguist-vendored
+*.sql linguist-vendored=false
