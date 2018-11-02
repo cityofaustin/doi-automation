@@ -1,8 +1,8 @@
 import requests
-import psycopg2
-# import base64
 import os
-# import xmlrpc.client
+
+
+import psycopg2
 
 assets = []
 count = 0
@@ -72,7 +72,10 @@ def diff_temp_table(conn):
                         EXCEPT
                         SELECT * FROM temp_socrata_asset_metadata) """
     cur.execute(diff_query)
-    return cur.fetchall()
+    diff_list = cur.fetchall()
+    cur.close()
+    conn.close()
+    return diff_list
 
 
 if __name__ == "__main__":
