@@ -4,7 +4,8 @@ Datacite (https://en.wikipedia.org/wiki/DataCite) is a non profit organization w
 The City of Austin would like to use this organization's tools to give the public a simple and effective way to cite our open data for any use.
 
 To see some examples of our citations created manually see
-(https://search.datacite.org/works?query=city+of+austin)
+
+(https://search.datacite.org/members/austintx)
 
 
 This project's goal is to explore and implement an integration for DataCite's citation archives with the 
