@@ -33,6 +33,6 @@ http://initd.org/psycopg/
 
 # _Clone this repository_
 
-'''
+```
 git clone https://github.com/tom-montgomery/doi-automation.git
-'''
+```
