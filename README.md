@@ -26,10 +26,16 @@ https://www.postgresql.org/
 requests:
 
 http://docs.python-requests.org/en/master/
+```
+pip install requests
+```
 
 psycopg2:
 
 http://initd.org/psycopg/
+```
+pip install psycopg2
+```
 
 # _Clone this repository_
 
