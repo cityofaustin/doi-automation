@@ -40,5 +40,5 @@ pip install psycopg2
 # _Clone this repository_
 
 ```
-git clone https://github.com/tom-montgomery/doi-automation.git
+git clone https://github.com/cityofaustin/doi-automation
 ```
