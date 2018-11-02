@@ -19,7 +19,7 @@ https://support.datacite.org/docs/api
 
 
 # Getting Started:
-# Install python 3.6
+# _Install python 3.6_
 
 https://www.python.org/downloads/release/python-360/
 
