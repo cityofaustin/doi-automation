@@ -1,15 +1,14 @@
 # DOI Automation
 
-Datacite (https://en.wikipedia.org/wiki/DataCite) is a non profit organization which provides an easy way to access datasets online.
-The City of Austin would like to use this organization's tools to give the public a simple and effective way to cite our open data for any use.
+Datacite (https://en.wikipedia.org/wiki/DataCite) is a non profit organization which provides an easy way to register, cite, and access datasets online.
+The City of Austin would like to use this organization's tools to garner insight into the usage of our open data as well as give the public a simple and effective way to cite our open data for any use.
 
-To see some examples of our citations created manually see
+To see some examples of our citations created manually see:
+https://search.datacite.org/members/austintx
 
-(https://search.datacite.org/members/austintx)
 
-
-This project's goal is to explore and implement an integration for DataCite's citation archives with the 
-Socrata Open Data portal. This will be done by developing automation to synchronize datacite's DOI archive with the City of Austin's socrata portal assets and metadata.
+This project's goal is to explore and implement an integration between DataCite's citation repository and the city's 
+Socrata Open Data portal (https://data.austintexas.gov/). This will be done by developing automation to synchronize datacite's DOI repository with the City of Austin's socrata portal assets and metadata using the two organization's APIs and a python backend.
 
 Socrata Discovery API:
 https://socratadiscovery.docs.apiary.io/#
