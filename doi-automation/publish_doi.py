@@ -33,7 +33,6 @@ def assemble_payload(conn, socrata_4x4, draft):
     # now that we have the identifier we can assemble the xml string
     xml_encoded = assemble_xml(metadata, identifier)
 
-
     payload = {'data':
                 {'type':
                     'dois',
@@ -95,6 +94,7 @@ def assemble_xml(metadata, doi_identifier):
     # set resource type
     for node in root.iter('{http://datacite.org/schema/kernel-3}resourceType'):
         node.text = metadata[0][3]
+        node.set('resourceTypeGeneral', metadata[0][3])
     # creating a temporary intermediate xml. Not sure if this is necessary.
     # We can just use the base64 string for loading into postgres.
     output_xml = ('{}\\xml\\datacite-test.xml'.format((os.path.dirname(os.path.realpath(__file__)))))
@@ -103,10 +103,7 @@ def assemble_xml(metadata, doi_identifier):
 
     tree = ET.parse(output_xml)
     root = tree.getroot()
-    # os.remove(output_xml)
-    # for node in root.iter():
-    #     print(node.tag)
-    #     print(node.text)
+    os.remove(output_xml)
 
     xmlstr = ET.tostring(root, encoding='utf-8', method='xml')
     xml_encoded = base64.b64encode(xmlstr)
@@ -123,10 +120,8 @@ def publish_doi(conn, socrata_4x4, draft=True):
     datacite_pass = os.environ['datacite_pass']
 
     payload, identifier, xml, metadata = assemble_payload(conn, socrata_4x4, draft)
-
-    r = requests.post(url, json=payload, auth=(datacite_user, datacite_pass))
-
     # update postgres doi_assets table if new DOI
+
     cur = conn.cursor()
     try:
         cur.execute("""INSERT INTO doi_assets(socrata_4x4, doi, metadata_xml, doi_prefix, doi_suffix, department)
@@ -134,12 +129,13 @@ def publish_doi(conn, socrata_4x4, draft=True):
                                                                     identifier.split('/')[-1].split('.')[0],
                                                                     identifier.split('/')[-1].split('.')[1],
                                                                     metadata[0][2]))
+        r = requests.post(url, json=payload, auth=(datacite_user, datacite_pass))
+        print(r.content)
     except psycopg2.IntegrityError:
         print('record already exists')
+        return
     conn.commit()
     cur.close()
-    conn.close()
-    print(r.content)
 
 
 if __name__ == "__main__":
@@ -147,4 +143,5 @@ if __name__ == "__main__":
                             user=os.environ['postgres_user'],
                             password=os.environ['postgres_pass'])
 
-    publish_doi(conn, '4hh5-fx4w')
+    # publish_doi(conn, '4hh5-fx4w')
+    pass
