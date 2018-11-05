@@ -3,8 +3,8 @@
     <ns0:creators>
         <ns0:creator>
             <ns0:creatorName></ns0:creatorName>
-            <ns0:nameIdentifier nameIdentifierScheme="ORCID" schemeURI="http://orcid.org/">0000-0001-5000-0007</ns0:nameIdentifier>
-            <ns0:affiliation>DataCite</ns0:affiliation>
+            <ns0:nameIdentifier nameIdentifierScheme="ORCID" schemeURI="http://orcid.org/"></ns0:nameIdentifier>
+            <ns0:affiliation>City of Austin, Texas</ns0:affiliation>
         </ns0:creator>
     </ns0:creators>
     <ns0:titles>
@@ -12,19 +12,19 @@
         <ns0:title titleType="Subtitle" xml:lang="en-us">Demonstration of DataCite Properties.</ns0:title>
     </ns0:titles>
     <ns0:publisher>City of Austin, Texas Open Data</ns0:publisher>
-    <ns0:publicationYear>2014</ns0:publicationYear>
+    <ns0:publicationYear></ns0:publicationYear>
     <ns0:subjects>
-        <ns0:subject schemeURI="http://dewey.info/" subjectScheme="dewey" xml:lang="en-us">000 computer science</ns0:subject>
+        <ns0:subject schemeURI="http://dewey.info/" subjectScheme="dewey" xml:lang="en-us"></ns0:subject>
     </ns0:subjects>
     <ns0:contributors>
         <ns0:contributor contributorType="ProjectLeader">
-            <ns0:contributorName>Starr, Joan</ns0:contributorName>
-            <ns0:nameIdentifier nameIdentifierScheme="ORCID" schemeURI="http://orcid.org/">0000-0002-7285-027X</ns0:nameIdentifier>
-            <ns0:affiliation>California Digital Library</ns0:affiliation>
+            <ns0:contributorName></ns0:contributorName>
+            <ns0:nameIdentifier nameIdentifierScheme="ORCID" schemeURI="http://orcid.org/"></ns0:nameIdentifier>
+            <ns0:affiliation></ns0:affiliation>
         </ns0:contributor>
     </ns0:contributors>
     <ns0:dates>
-        <ns0:date dateType="Updated">2014-10-17</ns0:date>
+        <ns0:date dateType="Updated"></ns0:date>
     </ns0:dates>
     <ns0:language>en-us</ns0:language>
     <ns0:resourceType resourceTypeGeneral="Software">XML</ns0:resourceType>
@@ -50,7 +50,7 @@
     </ns0:descriptions>
     <ns0:geoLocations>
         <ns0:geoLocation>
-            <ns0:geoLocationPoint>31.233 -67.302</ns0:geoLocationPoint>
+            <ns0:geoLocationPoint>30.2672 97.7431</ns0:geoLocationPoint>
             <ns0:geoLocationBox>41.090 -71.032 42.893 -68.211</ns0:geoLocationBox>
             <ns0:geoLocationPlace>City of Austin, Texas</ns0:geoLocationPlace>
         </ns0:geoLocation>
