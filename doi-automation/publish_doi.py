@@ -95,15 +95,6 @@ def assemble_xml(metadata, doi_identifier):
     for node in root.iter('{http://datacite.org/schema/kernel-3}resourceType'):
         node.text = metadata[0][3]
         node.set('resourceTypeGeneral', metadata[0][3])
-    # creating a temporary intermediate xml. Not sure if this is necessary.
-    # We can just use the base64 string for loading into postgres.
-    output_xml = ('{}\\xml\\datacite-test.xml'.format((os.path.dirname(os.path.realpath(__file__)))))
-    # create temp output
-    tree.write(output_xml)
-
-    tree = ET.parse(output_xml)
-    root = tree.getroot()
-    os.remove(output_xml)
 
     xmlstr = ET.tostring(root, encoding='utf-8', method='xml')
     xml_encoded = base64.b64encode(xmlstr)
