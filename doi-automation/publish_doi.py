@@ -1,6 +1,4 @@
 import os
-import requests
-
 import psycopg2
 
 
@@ -65,7 +63,7 @@ def assemble_payload(conn, socrata_4x4, draft):
     elif draft is False:
         payload['data']['type']['attributes']['event'] = 'publish'
 
-    return payload
+    return payload, identifier, xml_encoded, metadata
 
 
 def assemble_xml(metadata, doi_identifier):
@@ -116,18 +114,31 @@ def assemble_xml(metadata, doi_identifier):
     return xml_encoded.decode('utf-8')
 
 
-def insert_xml(conn):
-    pass
-
-
-def publish_doi(payload, draft=True):
+def publish_doi(conn, socrata_4x4, draft=True):
     """Publishes DOI, encodes XML into base64 and inserts DOI record into postgres"""
     import requests
 
+    url = 'https://api.datacite.org/dois'
     datacite_user = os.environ['datacite_user']
     datacite_pass = os.environ['datacite_pass']
-    url = 'https://api.datacite.org/dois'
+
+    payload, identifier, xml, metadata = assemble_payload(conn, socrata_4x4, draft)
+
     r = requests.post(url, json=payload, auth=(datacite_user, datacite_pass))
+
+    # update postgres doi_assets table if new DOI
+    cur = conn.cursor()
+    try:
+        cur.execute("""INSERT INTO doi_assets(socrata_4x4, doi, metadata_xml, doi_prefix, doi_suffix, department)
+                              VALUES  (%s, %s, %s, %s, %s, %s)""", (socrata_4x4, identifier, xml,
+                                                                    identifier.split('/')[-1].split('.')[0],
+                                                                    identifier.split('/')[-1].split('.')[1],
+                                                                    metadata[0][2]))
+    except psycopg2.IntegrityError:
+        print('record already exists')
+    conn.commit()
+    cur.close()
+    conn.close()
     print(r.content)
 
 
@@ -135,5 +146,5 @@ if __name__ == "__main__":
     conn = psycopg2.connect(host="localhost", database="citation-station",
                             user=os.environ['postgres_user'],
                             password=os.environ['postgres_pass'])
-    payload= assemble_payload(conn, 'jhra-82n2')
-    publish_doi(payload)
+
+    publish_doi(conn, '4hh5-fx4w')
