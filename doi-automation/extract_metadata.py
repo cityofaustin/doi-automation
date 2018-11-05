@@ -40,12 +40,10 @@ def gather_assets():
     return assets
 
 
-def load_temp_table(temp_assets):
+def load_temp_table(conn, temp_assets):
     """Load list of dictionaries into temp table in database for diff"""
     # use env variables for credentials
-    conn = psycopg2.connect(host="localhost", database="citation-station",
-                            user=os.environ['postgres_user'],
-                            password=os.environ['postgres_pass'])
+
     cur = conn.cursor()
     # create temp table
     tbl_statement = """CREATE TEMPORARY TABLE temp_socrata_asset_metadata(
@@ -58,7 +56,6 @@ def load_temp_table(temp_assets):
                           VALUES (%(socrata_4x4)s, %(name)s, %(department)s, %(type)s, %(year)s, %(permalink)s, %(desc)s)""", temp_assets)
     conn.commit()
     cur.close()
-    return conn
 
 
 def diff_temp_table(conn):
@@ -80,9 +77,13 @@ def diff_temp_table(conn):
 
 if __name__ == "__main__":
 
+    conn = psycopg2.connect(host="localhost", database="citation-station",
+                            user=os.environ['postgres_user'],
+                            password=os.environ['postgres_pass'])
+
     result_assets = gather_assets()
-    connection = load_temp_table(result_assets)
-    diff = diff_temp_table(connection)
+    load_temp_table(conn, result_assets)
+    diff = diff_temp_table(conn)
 
     print(len(result_assets))
     for d in diff:
