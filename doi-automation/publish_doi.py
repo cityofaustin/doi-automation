@@ -4,7 +4,7 @@ import requests
 import psycopg2
 
 
-def assemble_payload(conn, socrata_4x4):
+def assemble_payload(conn, socrata_4x4, draft):
     """Assembles json for doi creation post. Identifies dept prefix and doi suffix."""
     cur = conn.cursor()
 
@@ -35,6 +35,7 @@ def assemble_payload(conn, socrata_4x4):
     # now that we have the identifier we can assemble the xml string
     xml_encoded = assemble_xml(metadata, identifier)
 
+
     payload = {'data':
                 {'type':
                     'dois',
@@ -44,7 +45,7 @@ def assemble_payload(conn, socrata_4x4):
                          'url':
                             '{}'.format(metadata[0][5]),
                          'xml':
-                            '{}'.format(xml_encoded),
+                            '{}'.format(xml_encoded)
                          },
 
                     'relationships':
@@ -57,6 +58,13 @@ def assemble_payload(conn, socrata_4x4):
                          }
                  }
                }
+
+    # important, because datacite does not let you permanently delete published DOIs.
+    if draft is True:
+        pass
+    elif draft is False:
+        payload['data']['type']['attributes']['event'] = 'publish'
+
     return payload
 
 
@@ -69,7 +77,8 @@ def assemble_xml(metadata, doi_identifier):
     # get directory to find xml example
     tree = ET.parse(datacite_example)
     root = tree.getroot()
-    resource_id = root[0].tag.split('}')[0].lstrip('{')
+    # resource_id = root[0].tag.split('}')[0].lstrip('{')
+
     # set doi identifier
     for node in root.iter('{http://datacite.org/schema/kernel-3}identifier'):
         node.text = str(doi_identifier)
