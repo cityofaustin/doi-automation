@@ -1,8 +1,10 @@
 import os
+
+
 import psycopg2
 
 
-def assemble_payload(conn, socrata_4x4, draft):
+def assemble_payload(conn, socrata_4x4, draft, update=False):
     """Assembles json for doi creation post. Identifies dept prefix and doi suffix."""
     cur = conn.cursor()
 
@@ -62,7 +64,10 @@ def assemble_payload(conn, socrata_4x4, draft):
     elif draft is False:
         payload['data']['type']['attributes']['event'] = 'publish'
 
-    return payload, identifier, xml_encoded, metadata
+    if update is True:
+        return payload, xml_encoded, metadata
+    else:
+        return payload, identifier, xml_encoded, metadata
 
 
 def assemble_xml(metadata, doi_identifier):
@@ -123,7 +128,7 @@ def publish_doi(conn, socrata_4x4, draft=True):
         r = requests.post(url, json=payload, auth=(datacite_user, datacite_pass))
         print(r.content)
     except psycopg2.IntegrityError:
-        print('record already exists')
+        print('Could not publish, DOI already exists')
         return
     conn.commit()
     cur.close()
@@ -134,5 +139,5 @@ if __name__ == "__main__":
                             user=os.environ['postgres_user'],
                             password=os.environ['postgres_pass'])
 
-    # publish_doi(conn, '4hh5-fx4w')
-    pass
+    publish_doi(conn, '4hh5-fx4w')
+
