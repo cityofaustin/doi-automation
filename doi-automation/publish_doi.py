@@ -91,8 +91,16 @@ def assemble_xml(metadata, doi_identifier):
     for node in root.iter('{http://datacite.org/schema/kernel-3}publicationYear'):
         node.text = str(metadata[0][4])
     # set creator/dept
-    for node in root.iter('{http://datacite.org/schema/kernel-3}creatorName'):
-        node.text = metadata[0][2]
+
+    # add City Of to departments that start with 'Austin'
+    if metadata[0][2].split()[0] == 'Austin':
+        fixed_name = 'City Of {}'.format(metadata[0][2])
+        for node in root.iter('{http://datacite.org/schema/kernel-3}creatorName'):
+            node.text = fixed_name
+    else:
+        for node in root.iter('{http://datacite.org/schema/kernel-3}creatorName'):
+            node.text = metadata[0][2]
+
     # set description
     for node in root.iter('{http://datacite.org/schema/kernel-3}description'):
         node.text = metadata[0][6]
