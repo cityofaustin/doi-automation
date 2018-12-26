@@ -22,12 +22,6 @@ https://support.datacite.org/docs/api
 
 https://www.python.org/downloads/release/python-360/
 
-# _Install PostgreSQL_:
-
-https://www.postgresql.org/
-
-
-
 
 # _Python dependencies_
 
@@ -38,11 +32,11 @@ http://docs.python-requests.org/en/master/
 pip install requests
 ```
 
-psycopg2:
+pandas:
 
-http://initd.org/psycopg/
+https://pandas.pydata.org/
 ```
-pip install psycopg2
+pip install pandas
 ```
 
 # _Clone this repository_
