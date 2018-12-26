@@ -1,8 +1,7 @@
 import requests
-import os
 
 
-import psycopg2
+import pandas as pd
 
 assets = []
 count = 0
@@ -40,53 +39,37 @@ def gather_assets():
     return assets
 
 
-def load_temp_table(conn, temp_assets):
+def load_temp_table(temp_assets):
     """Load list of dictionaries into temp table in database for diff"""
     # use env variables for credentials
 
-    cur = conn.cursor()
-    # create temp table
-    tbl_statement = """CREATE TEMPORARY TABLE temp_socrata_asset_metadata(
-                        PRIMARY KEY (socrata_4x4)) 
-                        INHERITS (socrata_asset_metadata)"""
-    cur.execute(tbl_statement)
+    temp_df = pd.DataFrame(temp_assets)
 
-    # insert list of dictionaries into temp table
-    cur.executemany("""INSERT INTO temp_socrata_asset_metadata(socrata_4x4,name,department,type,year,permalink,"desc")
-                          VALUES (%(socrata_4x4)s, %(name)s, %(department)s, %(type)s, %(year)s, %(permalink)s, %(desc)s)""", temp_assets)
-    conn.commit()
-    cur.close()
+    return temp_df
 
 
-def diff_temp_table(conn):
+def update_perm_table(assets):
+
+    perm_update_table = pd.DataFrame(assets)
+    perm_update_table.to_json('data\\socrata_assets.json')
+    # return perm_table
+
+
+def diff_temp_table(temp_table):
     """Perform diff of newly retrieved socrata assets against in temp table against static table."""
-    cur = conn.cursor()
-    diff_query = """(   SELECT * FROM temp_socrata_asset_metadata
-                        EXCEPT
-                        SELECT * FROM socrata_asset_metadata)  
-                    UNION ALL
-                    (   SELECT * FROM socrata_asset_metadata
-                        EXCEPT
-                        SELECT * FROM temp_socrata_asset_metadata) """
-    cur.execute(diff_query)
-    diff_list = cur.fetchall()
-    cur.close()
-    conn.close()
-    return diff_list
+    perm_table = pd.read_json('data\\socrata_assets.json')
+
+    # find name or description changes
+    common = temp_table.merge(perm_table, on=['desc', 'name'])
+    changed = temp_table[(~temp_table.desc.isin(common.desc))]
+    return changed
 
 
 if __name__ == "__main__":
 
-    conn = psycopg2.connect(host="localhost", database="citation-station",
-                            user=os.environ['postgres_user'],
-                            password=os.environ['postgres_pass'])
-
     result_assets = gather_assets()
-    load_temp_table(conn, result_assets)
-    diff = diff_temp_table(conn)
+    temp_table = load_temp_table(result_assets)
+    perm_table = update_perm_table(result_assets)
+    diff = diff_temp_table(temp_table)
 
-    print(len(result_assets))
-    for d in diff:
-        print(d)
-    for asset in result_assets:
-        print(asset)
+    print(diff['socrata_4x4'])
