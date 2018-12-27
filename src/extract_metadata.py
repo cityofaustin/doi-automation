@@ -1,10 +1,15 @@
 import requests
-
+import os
 
 import pandas as pd
 
 assets = []
 count = 0
+
+fileDir = os.path.dirname(os.path.realpath('__file__'))
+
+filename = os.path.join(fileDir, '../data/socrata_assets.json')
+socrata_assets_json = os.path.abspath(os.path.realpath(filename))
 
 
 def gather_socrata_assets():
@@ -55,13 +60,13 @@ def load_temp_table(temp_assets):
 def update_perm_table(assets):
 
     perm_update_table = pd.DataFrame(assets)
-    perm_update_table.to_json('data\\socrata_assets.json')
+    perm_update_table.to_json(socrata_assets_json)
     # return perm_table
 
 
 def diff_temp_table(temp_table):
     """Perform diff of newly retrieved socrata assets against in temp table against static table."""
-    perm_table = pd.read_json('data\\socrata_assets.json')
+    perm_table = pd.read_json(socrata_assets_json)
 
     # find name or description changes
     common = temp_table.merge(perm_table, on=['desc', 'name'])
