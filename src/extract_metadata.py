@@ -7,7 +7,7 @@ assets = []
 count = 0
 
 
-def gather_assets():
+def gather_socrata_assets():
     """Gathers assets from socrata for metadata generation and returns a list of dictionaries. Dictionaries keys are
     field names as required by DataCite and values are from Socrata"""
     global count
@@ -39,6 +39,10 @@ def gather_assets():
     return assets
 
 
+def gather_doi_assets():
+    pass
+
+
 def load_temp_table(temp_assets):
     """Load list of dictionaries into temp table in database for diff"""
     # use env variables for credentials
@@ -67,9 +71,7 @@ def diff_temp_table(temp_table):
 
 if __name__ == "__main__":
 
-    result_assets = gather_assets()
-    temp_table = load_temp_table(result_assets)
-    perm_table = update_perm_table(result_assets)
-    diff = diff_temp_table(temp_table)
+    result_assets = gather_socrata_assets()
+    print(count)
+    print(len(result_assets))
 
-    print(diff['socrata_4x4'])
