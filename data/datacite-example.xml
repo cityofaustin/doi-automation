@@ -43,7 +43,7 @@
     </ns0:formats>
     <ns0:version>3.1</ns0:version>
     <ns0:rightsList>
-        <ns0:rights rightsURI="http://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0 Universal</ns0:rights>
+        <ns0:rights rightsURI="http://www.opendatacommons.org/licenses/pddl/1.0/">Public Domain Dedication and License 1.0</ns0:rights>
     </ns0:rightsList>
     <ns0:descriptions>
         <ns0:description descriptionType="Abstract" xml:lang="en-us">XML example of all DataCite Metadata Schema v3.1 properties.</ns0:description>
