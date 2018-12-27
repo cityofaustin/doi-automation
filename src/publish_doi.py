@@ -12,7 +12,7 @@ doi_assets_json = os.path.abspath(os.path.realpath(filename))
 filename = os.path.join(fileDir, '../data/socrata_assets.json')
 socrata_assets_json = os.path.abspath(os.path.realpath(filename))
 
-filename = os.path.join(fileDir, '../data/doi_assets.json')
+filename = os.path.join(fileDir, '../data/departments.json')
 departments_json = os.path.abspath(os.path.realpath(filename))
 
 filename = os.path.join(fileDir, '../data/datacite-example.xml')
@@ -70,11 +70,12 @@ def assemble_payload(socrata_4x4, draft=True, update=False):
                  }
                }
 
+    #TODO not working =(
     # important, because datacite does not let you permanently delete published DOIs.
     if draft is True:
         pass
     else:
-        payload['data']['type']['attributes']['event'] = 'publish'
+        payload['data']['attributes'].update({'event': 'publish'})
 
     return payload, doi, xml_encoded, metadata
 
@@ -136,11 +137,13 @@ def publish_doi(socrata_4x4, draft=True):
 
     # publish new DOI
     r = requests.post(url, json=payload, auth=(datacite_user, datacite_pass))
-    if r.content == '{"errors":[{"source":"doi","title":"This doi has already been taken"}]}':
-        print('DOI Already Exists...')
+    if r.content[2:8] == 'errors':
+        print('DataCite error \n')
+        print(r.content)
         return
     else:
         # update doi_assets json
+        print(r.content)
         doi_assets = doi_assets.append({'socrata_4x4': socrata_4x4,
                                         'doi': doi,
                                         'metadata_xml': xml,
@@ -152,5 +155,6 @@ def publish_doi(socrata_4x4, draft=True):
 
 
 if __name__ == "__main__":
-    publish_doi('gpeq-wpdt')
+    pass
+    # publish_doi('rfif-mmvg')
 

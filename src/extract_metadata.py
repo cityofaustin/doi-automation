@@ -57,26 +57,39 @@ def load_temp_table(temp_assets):
     return temp_df
 
 
-def update_perm_table(assets):
+def update_static_table(assets):
 
-    perm_update_table = pd.DataFrame(assets)
-    perm_update_table.to_json(socrata_assets_json)
+    static_update_table = pd.DataFrame(assets)
+    static_update_table.to_json(socrata_assets_json)
     # return perm_table
 
 
 def diff_temp_table(temp_table):
-    """Perform diff of newly retrieved socrata assets against in temp table against static table."""
-    perm_table = pd.read_json(socrata_assets_json)
+    """Perform diff of newly retrieved socrata assets in temp table against static table."""
+    static_table = pd.read_json(socrata_assets_json)
 
     # find name or description changes
-    common = temp_table.merge(perm_table, on=['desc', 'name'])
-    changed = temp_table[(~temp_table.desc.isin(common.desc))]
-    return changed
+    change_join = temp_table.merge(static_table, on=['desc', 'name'])
+    changed = temp_table[(~temp_table.desc.isin(change_join.desc))]
+
+    # TODO not working. Socrata wonkyness making testing difficult
+    # find added assets
+    add_join = temp_table.merge(static_table, on=['socrata_4x4'], how='left', indicator=True)
+    print(add_join.head())
+    adds = add_join[add_join['_merge'] == 'left_only']
+
+    # find deleted assets not sure if this will be useful because DataCite does not allow deletion of non-draft state DOIs
+    del_join = temp_table.merge(static_table, on=['socrata_4x4'], how='right', indicator=True)
+    deletes = del_join[del_join['_merge'] == 'right_only']
+
+    return changed, adds
 
 
 if __name__ == "__main__":
-
-    result_assets = gather_socrata_assets()
     print(count)
-    print(len(result_assets))
+    assets = gather_socrata_assets()
+    print(len(assets))
+    changes, adds = diff_temp_table(load_temp_table(assets))
+    print(changes.head())
+    print(adds.head())
 
