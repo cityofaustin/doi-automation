@@ -5,12 +5,9 @@ import pandas as pd
 
 assets = []
 count = 0
-
 fileDir = os.path.dirname(os.path.realpath('__file__'))
-
-filename = os.path.join(fileDir, '../data/socrata_assets.json')
+filename = os.path.join(fileDir, 'data\\socrata_assets.json')
 socrata_assets_json = os.path.abspath(os.path.realpath(filename))
-
 
 def gather_socrata_assets():
     """Gathers assets from socrata for metadata generation and returns a list of dictionaries. Dictionaries keys are
@@ -44,6 +41,7 @@ def gather_socrata_assets():
     return assets
 
 
+#TODO: figure out how to get ALL (including draft) datacite assets
 def gather_doi_assets():
     pass
 
@@ -57,39 +55,25 @@ def load_temp_table(temp_assets):
     return temp_df
 
 
-def update_static_table(assets):
+def update_static_table(assets, socrata_4x4=None):
+    """Update static socrata assets table. Supply socrata_4x4 to only update that record."""
 
-    static_update_table = pd.DataFrame(assets)
-    static_update_table.to_json(socrata_assets_json)
-    # return perm_table
-
-
-def diff_temp_table(temp_table):
-    """Perform diff of newly retrieved socrata assets in temp table against static table."""
-    static_table = pd.read_json(socrata_assets_json)
-
-    # find name or description changes
-    change_join = temp_table.merge(static_table, on=['desc', 'name'])
-    changed = temp_table[(~temp_table.desc.isin(change_join.desc))]
-
-    # TODO not working. Socrata wonkyness making testing difficult
-    # find added assets
-    add_join = temp_table.merge(static_table, on=['socrata_4x4'], how='left', indicator=True)
-    print(add_join.head())
-    adds = add_join[add_join['_merge'] == 'left_only']
-
-    # find deleted assets not sure if this will be useful because DataCite does not allow deletion of non-draft state DOIs
-    del_join = temp_table.merge(static_table, on=['socrata_4x4'], how='right', indicator=True)
-    deletes = del_join[del_join['_merge'] == 'right_only']
-
-    return changed, adds
+    if socrata_4x4 is not None:
+        # Find socrata_4x4 metadata in asset list.
+        record = (next(item for item in assets if item["socrata_4x4"] == socrata_4x4), '4x4 does not exist in static')
+        # read json, update, and save
+        static_table = pd.read_json(socrata_assets_json)
+        static_table.loc[static_table['socrata_4x4'] == socrata_4x4, 'desc'] = record[0]['desc']
+        static_table.loc[static_table['socrata_4x4'] == socrata_4x4, 'name'] = record[0]['name']
+        static_table.to_json(socrata_assets_json)
+        return
+    else:
+        # update json with all latest records
+        all_new_assets = pd.DataFrame(assets)
+        all_new_assets.to_json(socrata_assets_json)
+        return
 
 
 if __name__ == "__main__":
-    print(count)
-    assets = gather_socrata_assets()
-    print(len(assets))
-    changes, adds = diff_temp_table(load_temp_table(assets))
-    print(changes.head())
-    print(adds.head())
+    pass
 
