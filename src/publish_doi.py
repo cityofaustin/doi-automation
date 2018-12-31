@@ -36,8 +36,12 @@ def assemble_payload(socrata_4x4, draft=True, update=False):
     if update is False:
         # figure out next doi suffix to use if new
         department_dois = doi_assets.loc[doi_assets['department'] == metadata['department'].item()]
-        # add 1 to highest suffix value and use zfill to pad w/zeros to 6 chars
-        doi_suffix = str((department_dois['doi_suffix'].max()+1)).zfill(6)
+        if len(department_dois) != 0:
+            # add 1 to highest suffix value and use zfill to pad w/zeros to 6 chars
+            doi_suffix = str((department_dois['doi_suffix'].max()+1)).zfill(6)
+        else:
+            # new doi for dept, start at 000001
+            doi_suffix = str(1).zfill(6)
         # zfill dept prefix to 3 chars
         doi = '10.26000/{}.{}'.format(str(dept_prefix.index[0]).zfill(3), doi_suffix)
     else:
