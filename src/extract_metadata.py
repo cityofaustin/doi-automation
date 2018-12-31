@@ -9,6 +9,7 @@ fileDir = os.path.dirname(os.path.realpath('__file__'))
 filename = os.path.join(fileDir, 'data\\socrata_assets.json')
 socrata_assets_json = os.path.abspath(os.path.realpath(filename))
 
+
 def gather_socrata_assets():
     """Gathers assets from socrata for metadata generation and returns a list of dictionaries. Dictionaries keys are
     field names as required by DataCite and values are from Socrata"""
@@ -59,6 +60,7 @@ def update_static_table(assets, socrata_4x4=None):
     """Update static socrata assets table. Supply socrata_4x4 to only update that record."""
 
     if socrata_4x4 is not None:
+        # print('recording '+ socrata_4x4)
         # Find socrata_4x4 metadata in asset list.
         record = (next(item for item in assets if item["socrata_4x4"] == socrata_4x4), '4x4 does not exist in static')
         # read json, update, and save
@@ -68,6 +70,7 @@ def update_static_table(assets, socrata_4x4=None):
         static_table.to_json(socrata_assets_json)
         return
     else:
+        print('updating all')
         # update json with all latest records
         all_new_assets = pd.DataFrame(assets)
         all_new_assets.to_json(socrata_assets_json)

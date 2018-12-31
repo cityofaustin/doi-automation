@@ -2,6 +2,8 @@ import os
 import requests
 import datetime
 import json
+# TODO add logging
+# import logging
 
 
 import pandas as pd
@@ -21,22 +23,26 @@ def update_doi(socrata_4x4, draft=True):
     url = 'https://api.datacite.org/dois/'
     datacite_user = os.environ['datacite_user']
     datacite_pass = os.environ['datacite_pass']
+    print('Updating: ' + socrata_4x4)
 
     doi_assets = pd.read_json(assets_filename)
 
     payload, doi, xml, metadata = assemble_payload(socrata_4x4, draft, update=True)
 
     r = requests.put('{}{}'.format(url, doi), json=payload, auth=(datacite_user, datacite_pass))
-    if r.content[2:8] == 'errors':
-        print('DataCite error \n')
-        print(r.content.json())
-        return
-    else:
-        # update doi_assets
-        print(r.content)
+    response_dict = json.loads(r.content)
+    print('DataCite Response:')
+    print(response_dict)
+    if 'data' in response_dict:
+        # if successful update doi table
         doi_assets.loc[doi_assets['socrata_4x4'] == socrata_4x4, 'metadata_xml'] = xml
         doi_assets.loc[doi_assets['socrata_4x4'] == socrata_4x4, 'last_updated'] = str(datetime.datetime.now())
         doi_assets.to_json(filename)
+        return True
+    else:
+        print('Error, could not update: ' + socrata_4x4)
+        return False
+
 
 
 if __name__ == "__main__":

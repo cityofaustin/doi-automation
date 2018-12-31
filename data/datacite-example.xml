@@ -3,7 +3,6 @@
     <ns0:creators>
         <ns0:creator>
             <ns0:creatorName></ns0:creatorName>
-            <ns0:nameIdentifier nameIdentifierScheme="ORCID" schemeURI="http://orcid.org/"></ns0:nameIdentifier>
             <ns0:affiliation>City of Austin, Texas</ns0:affiliation>
         </ns0:creator>
     </ns0:creators>
@@ -16,18 +15,10 @@
     <ns0:subjects>
         <ns0:subject schemeURI="http://dewey.info/" subjectScheme="dewey" xml:lang="en-us"></ns0:subject>
     </ns0:subjects>
-    <ns0:contributors>
-        <ns0:contributor contributorType="ProjectLeader">
-            <ns0:contributorName></ns0:contributorName>
-            <ns0:nameIdentifier nameIdentifierScheme="ORCID" schemeURI="http://orcid.org/"></ns0:nameIdentifier>
-            <ns0:affiliation></ns0:affiliation>
-        </ns0:contributor>
-    </ns0:contributors>
     <ns0:dates>
         <ns0:date dateType="Updated"></ns0:date>
     </ns0:dates>
     <ns0:language>en-us</ns0:language>
-    <ns0:resourceType resourceTypeGeneral="Software">XML</ns0:resourceType>
     <ns0:alternateIdentifiers>
         <ns0:alternateIdentifier alternateIdentifierType="URL">http://schema.datacite.org/schema/meta/kernel-3.1/example/datacite-example-full-v3.1.xml</ns0:alternateIdentifier>
     </ns0:alternateIdentifiers>
