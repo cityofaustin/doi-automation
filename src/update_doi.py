@@ -8,8 +8,8 @@ import json
 
 import pandas as pd
 
-from extract_metadata import gather_socrata_assets
-from extract_metadata import update_static_table
+# from extract_metadata import gather_socrata_assets
+# from extract_metadata import update_static_table
 from publish_doi import assemble_payload
 
 fileDir = os.path.dirname(os.path.realpath('__file__'))
@@ -42,7 +42,6 @@ def update_doi(socrata_4x4, draft=True):
     else:
         print('Error, could not update: ' + socrata_4x4)
         return False
-
 
 
 if __name__ == "__main__":

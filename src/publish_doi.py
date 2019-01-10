@@ -19,7 +19,7 @@ filename = os.path.join(fileDir, 'data\\datacite-example.xml')
 datacite_xml = os.path.abspath(os.path.realpath(filename))
 
 
-def assemble_payload(socrata_4x4, draft=True, update=False):
+def assemble_payload(socrata_4x4, temp_table=None, draft=True, update=False):
     """Assembles json for doi creation post & update put. Identifies dept prefix and doi suffix."""
 
     # Gather static data
@@ -27,8 +27,12 @@ def assemble_payload(socrata_4x4, draft=True, update=False):
     departments = pd.read_json(departments_json)
     doi_assets = pd.read_json(doi_assets_json)
 
-    # fetch metadata
-    metadata = socrata_assets.loc[socrata_assets['socrata_4x4'] == socrata_4x4]
+    if temp_table is not None:
+        # fetch metadata if not new
+        metadata = temp_table.loc[temp_table['socrata_4x4'] == socrata_4x4]
+    else:
+        # fetch metdata if new
+        metadata = socrata_assets.loc[socrata_assets['socrata_4x4'] == socrata_4x4]
 
     # figure out which department prefix to use
     dept_prefix = departments.loc[departments['Department'] == metadata['department'].item()]
@@ -128,7 +132,7 @@ def assemble_xml(metadata, doi):
     return xml_encoded.decode('utf-8')
 
 
-def publish_doi(socrata_4x4, draft=True):
+def publish_doi(socrata_4x4, temp_table=None, draft=True):
     """Publishes DOI, encodes XML into base64 and inserts DOI record into postgres"""
     import requests
 
@@ -137,14 +141,26 @@ def publish_doi(socrata_4x4, draft=True):
     datacite_user = os.environ['datacite_user']
     datacite_pass = os.environ['datacite_pass']
 
-    payload, doi, xml, metadata = assemble_payload(socrata_4x4, draft)
+    payload, doi, xml, metadata = assemble_payload(socrata_4x4, temp_table=temp_table, draft=draft)
 
     # publish new DOI
     r = requests.post(url, json=payload, auth=(datacite_user, datacite_pass))
+
+    # update socrata asset's DOI metadata
+    headers = {'Host': 'data.austintexas.gov',
+               'Accept': """*/*""",
+               'Content-Length': '6000',
+               'Content-Type': 'application/json',
+               'X-App-Token': os.environ['socrata_doi_app_token']}
+    url = 'https://data.austintexas.gov/api/views/metadata/v1/{}'.format(socrata_4x4)
+    data = {"customFields": {"Digital Object Identifer (DOI)": {"DOI Number": "{}".format(doi)}}}
+    r2 = requests.patch(url, json=data, auth=(os.environ['socrata_doi_user'], os.environ['socrata_doi_pass']), headers=headers)
+    print(r2.content)
+
     if r.content[2:8] == 'errors':
         print('DataCite error \n')
         print(r.content)
-        return
+        return False
     else:
         # update doi_assets json
         print(r.content)
@@ -156,9 +172,10 @@ def publish_doi(socrata_4x4, draft=True):
                                         'department': metadata['department'].item(),
                                         'created_at': str(datetime.datetime.now())}, ignore_index=True)
         doi_assets.to_json(doi_assets_json)
+        return True
 
 
 if __name__ == "__main__":
     pass
-    # publish_doi('rfif-mmvg')
+    publish_doi('gric-78uy')
 

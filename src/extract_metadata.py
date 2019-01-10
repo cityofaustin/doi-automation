@@ -1,5 +1,6 @@
 import requests
 import os
+import json
 
 import pandas as pd
 
@@ -42,13 +43,17 @@ def gather_socrata_assets():
     return assets
 
 
-#TODO: figure out how to get ALL (including draft) datacite assets
+# TODO: figure out how to get ALL (including draft) datacite assets
 def gather_doi_assets():
-    pass
+    """Query DataCite for client DOIs"""
+    url = 'https://api.datacite.org/clients/austintx.atxdr/dois'
+    r = requests.get(url)
+    results = json.loads(r.content)['data']
+    return results
 
 
 def load_temp_table(temp_assets):
-    """Load list of dictionaries into temp table in database for diff"""
+    """Load list of dictionaries into temp table for diff"""
     # use env variables for credentials
 
     temp_df = pd.DataFrame(temp_assets)
@@ -78,5 +83,5 @@ def update_static_table(assets, socrata_4x4=None):
 
 
 if __name__ == "__main__":
-    pass
+    gather_socrata_assets()
 

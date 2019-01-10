@@ -3,8 +3,9 @@ import os
 
 import pandas as pd
 
-
-socrata_assets_json = 'data\\socrata_assets.json'
+fileDir = os.path.dirname(os.path.realpath('__file__'))
+filename = os.path.join(fileDir, 'data\\socrata_assets.json')
+socrata_assets_json = os.path.abspath(os.path.realpath(filename))
 
 
 def find_changes(temp_table):
@@ -23,10 +24,21 @@ def find_changes(temp_table):
 
 
 def find_adds(temp_table):
-    # TODO not working. Socrata wonkyness making testing difficult
     static_table = pd.read_json(socrata_assets_json)
     # find added assets
     add_join = temp_table.merge(static_table, on=['socrata_4x4'], how='left', indicator=True)
     print(add_join.head())
-    adds = add_join[add_join['_merge'] == 'left_only']
+    adds_df = add_join[add_join['_merge'] == 'left_only']
+    return adds_df
+
+
+def find_deletes(temp_table):
     pass
+
+
+if __name__ == "__main__":
+    from extract_metadata import *
+    assets = gather_socrata_assets()
+    #temp_table_df = load_temp_table(assets)
+    #test = find_adds(temp_table_df)
+    print(socrata_assets_json)
