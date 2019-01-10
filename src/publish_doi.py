@@ -107,9 +107,7 @@ def assemble_xml(metadata, doi):
     # set pub year
     for node in root.iter('{http://datacite.org/schema/kernel-3}publicationYear'):
         node.text = str(metadata['year'].item())
-    # set creator/dept
-
-    # add City Of to departments that start with 'Austin'
+    # set creator/dept & add 'City Of' to departments that start with 'Austin'
     if metadata['department'].item().split()[0] == 'Austin':
         fixed_name = 'City Of {}'.format(metadata['department'].item())
         for node in root.iter('{http://datacite.org/schema/kernel-3}creatorName'):
@@ -157,7 +155,7 @@ def publish_doi(socrata_4x4, temp_table=None, draft=True):
     r2 = requests.patch(url, json=data, auth=(os.environ['socrata_doi_user'], os.environ['socrata_doi_pass']), headers=headers)
     print(r2.content)
 
-    if r.content[2:8] == 'errors':
+    if r.content[2:8] == 'errors' or r2.content[2:8] == 'errors':
         print('DataCite error \n')
         print(r.content)
         return False
