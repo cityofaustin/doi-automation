@@ -18,7 +18,7 @@ assets_filename = os.path.abspath(os.path.realpath(filename))
 
 
 def update_doi(socrata_4x4, temp_table, draft=True):
-    """Updates existing DOI's metadata if diff detects a change"""
+    """Updates existing DOI's metadata"""
 
     url = 'https://api.datacite.org/dois/'
     datacite_user = os.environ['datacite_user']
