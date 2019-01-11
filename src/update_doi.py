@@ -17,7 +17,7 @@ filename = os.path.join(fileDir, 'data\\doi_assets.json')
 assets_filename = os.path.abspath(os.path.realpath(filename))
 
 
-def update_doi(socrata_4x4, draft=True):
+def update_doi(socrata_4x4, temp_table, draft=True):
     """Updates existing DOI's metadata if diff detects a change"""
 
     url = 'https://api.datacite.org/dois/'
@@ -27,13 +27,15 @@ def update_doi(socrata_4x4, draft=True):
 
     doi_assets = pd.read_json(assets_filename)
 
-    payload, doi, xml, metadata = assemble_payload(socrata_4x4, draft, update=True)
+    payload, doi, xml, metadata = assemble_payload(socrata_4x4, temp_table, draft, update=True)
 
     r = requests.put('{}{}'.format(url, doi), json=payload, auth=(datacite_user, datacite_pass))
     response_dict = json.loads(r.content)
     print('DataCite Response:')
     print(response_dict)
     if 'data' in response_dict:
+        # TODO add git commit of file to push to github repo
+        # TODO linking lines to github?
         # if successful update doi table
         doi_assets.loc[doi_assets['socrata_4x4'] == socrata_4x4, 'metadata_xml'] = xml
         doi_assets.loc[doi_assets['socrata_4x4'] == socrata_4x4, 'last_updated'] = str(datetime.datetime.now())
