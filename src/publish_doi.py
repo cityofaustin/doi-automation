@@ -78,7 +78,6 @@ def assemble_payload(socrata_4x4, temp_table=None, draft=True, update=False):
                  }
                }
 
-    #TODO not working =(
     # important, because datacite does not let you permanently delete published DOIs.
     if draft is True:
         pass
