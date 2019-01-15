@@ -150,7 +150,7 @@ def publish_doi(socrata_4x4, temp_table=None, draft=True):
                'Content-Type': 'application/json',
                'X-App-Token': os.environ['socrata_doi_app_token']}
     url = 'https://data.austintexas.gov/api/views/metadata/v1/{}'.format(socrata_4x4)
-    data = {"customFields": {"Digital Object Identifer (DOI)": {"DOI Number": "{}".format(doi)}}}
+    data = {"customFields": {"Digital Object Identifer (DOI)": {"DOI Number": "https://doi.org/{}".format(doi)}}}
     r2 = requests.patch(url, json=data, auth=(os.environ['socrata_doi_user'], os.environ['socrata_doi_pass']), headers=headers)
     print(r2.content)
 
@@ -174,5 +174,5 @@ def publish_doi(socrata_4x4, temp_table=None, draft=True):
 
 if __name__ == "__main__":
     pass
-    publish_doi('gric-78uy')
+    # publish_doi('gric-78uy')
 
