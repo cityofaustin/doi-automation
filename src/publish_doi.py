@@ -106,9 +106,13 @@ def assemble_xml(metadata, doi):
     # set pub year
     for node in root.iter('{http://datacite.org/schema/kernel-3}publicationYear'):
         node.text = str(metadata['year'].item())
-    # set creator/dept & add 'City Of' to departments that start with 'Austin'
-    if metadata['department'].item().split()[0] == 'Austin':
-        fixed_name = 'City Of {}'.format(metadata['department'].item())
+    # trying to fix name display for citations
+    if metadata['department'].item().split()[0] == 'Austin' and metadata['department'].item().split()[-1] != 'Department':
+        fixed_name = metadata['department'].item().split(' ', 1)[1] + ' Department'
+        for node in root.iter('{http://datacite.org/schema/kernel-3}creatorName'):
+            node.text = fixed_name
+    elif metadata['department'].item().split()[0] == 'Austin' and metadata['department'].item().split()[-1] == 'Department':
+        fixed_name = metadata['department'].item().split(' ', 1)[1]
         for node in root.iter('{http://datacite.org/schema/kernel-3}creatorName'):
             node.text = fixed_name
     else:
