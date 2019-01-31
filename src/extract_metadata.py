@@ -1,6 +1,7 @@
 import requests
 import os
 import json
+import datetime
 
 import pandas as pd
 
@@ -9,6 +10,8 @@ count = 0
 fileDir = os.path.dirname(os.path.realpath('__file__'))
 filename = os.path.join(fileDir, 'data\\socrata_assets.json')
 socrata_assets_json = os.path.abspath(os.path.realpath(filename))
+filename = os.path.join(fileDir, 'data\\doi_assets.json')
+doi_assets_json = os.path.abspath(os.path.realpath(filename))
 
 
 def gather_socrata_assets():
@@ -53,7 +56,13 @@ def gather_doi_assets():
     page_count = results['meta']['totalPages']
     count = 0
 
-    pd.read_json(socrata_assets_json)
+    doi_assets = pd.read_json(doi_assets_json)
+    doi_list = list(doi_assets['doi'])
+
+    assets = gather_socrata_assets()
+
+    datacite_user = os.environ['datacite_user']
+    datacite_pass = os.environ['datacite_pass']
 
     while count < page_count:
         count += 1
@@ -62,7 +71,29 @@ def gather_doi_assets():
         response = json.loads(r.content)
         for asset in response['data']:
             doi = asset['id']
-    return results
+            if doi in doi_list:
+                print('{} already accounted for'.format(doi))
+            else:
+                print('{} not accounted for'.format(doi))
+                url = 'https://api.datacite.org/works/{}'.format(doi)
+                r = requests.get(url, auth=(datacite_user, datacite_pass))
+                response = json.loads(r.content)
+                xml = response['data']['attributes']['xml']
+                title = response['data']['attributes']['title']
+                try:
+                    socrata_asset = next(item for item in assets if item["name"] == title)
+                    socrata_4x4 = socrata_asset['socrata_4x4']
+                    doi_assets = doi_assets.append({'socrata_4x4': socrata_4x4,
+                                                    'doi': doi,
+                                                    'metadata_xml': xml,
+                                                    'doi_prefix': doi.split('/')[-1].split('.')[0],
+                                                    'doi_suffix': doi.split('/')[-1].split('.')[1],
+                                                    'department': socrata_asset['department'],
+                                                    'created_at': str(datetime.datetime.now())}, ignore_index=True)
+                    print(title, socrata_4x4)
+                    doi_assets.to_json(doi_assets_json)
+                except StopIteration:
+                    print('{} does not exist'.format(title))
 
 
 def load_temp_table(temp_assets):
