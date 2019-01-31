@@ -45,10 +45,23 @@ def gather_socrata_assets():
 
 # TODO: figure out how to get ALL (including draft) datacite assets; pagination is occuring
 def gather_doi_assets():
-    """Query DataCite for client DOIs"""
+    """Query DataCite for client DOIs and compare with socrata asset json"""
+
     url = 'https://api.datacite.org/clients/austintx.atxdr/dois'
     r = requests.get(url)
-    results = json.loads(r.content)['data']
+    results = json.loads(r.content)
+    page_count = results['meta']['totalPages']
+    count = 0
+
+    pd.read_json(socrata_assets_json)
+
+    while count < page_count:
+        count += 1
+        url = 'https://api.datacite.org/clients/austintx.atxdr/dois?page[number]={}'.format(count)
+        r = requests.get(url)
+        response = json.loads(r.content)
+        for asset in response['data']:
+            doi = asset['id']
     return results
 
 
