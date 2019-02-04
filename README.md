@@ -6,9 +6,7 @@ The City of Austin would like to use this organization's tools to garner insight
 To see some examples of our citations see:
 https://search.datacite.org/members/austintx
 
-
-This project's goal is to explore and implement an integration between DataCite's citation repository and the city's 
-Socrata Open Data portal (https://data.austintexas.gov/). This will be done by developing automation to synchronize datacite's DOI repository with the City of Austin's socrata portal assets and metadata using the two organization's APIs and a python backend.
+This project's goal is to explore and implement an integration between DataCite's citation repository and the city's Socrata Open Data portal (https://data.austintexas.gov/). This will be done by developing automation to synchronize datacite's DOI repository with the City of Austin's socrata portal assets and metadata using the two organization's APIs and a python backend.
 
 Socrata Discovery API:
 https://socratadiscovery.docs.apiary.io/#
@@ -16,18 +14,18 @@ https://socratadiscovery.docs.apiary.io/#
 DataCite REST API:
 https://support.datacite.org/docs/api
 
-
 # Getting Started:
+
 # _Install python 3.6_
 
 https://www.python.org/downloads/release/python-360/
-
 
 # _Python dependencies_
 
 requests:
 
 http://docs.python-requests.org/en/master/
+
 ```
 pip install requests
 ```
@@ -35,6 +33,7 @@ pip install requests
 pandas:
 
 https://pandas.pydata.org/
+
 ```
 pip install pandas
 ```
