@@ -43,3 +43,10 @@ pip install pandas
 ```
 git clone https://github.com/cityofaustin/doi-automation.git
 ```
+
+## Run with Docker
+
+```bash
+docker build --tag=doi-automation .
+docker run --rm -it --name doi-automation doi-automation
+```
