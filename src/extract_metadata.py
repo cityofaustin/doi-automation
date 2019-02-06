@@ -8,9 +8,9 @@ import pandas as pd
 assets = []
 count = 0
 fileDir = os.path.dirname(os.path.realpath('__file__'))
-filename = os.path.join(fileDir, 'data\\socrata_assets.json')
+filename = os.path.join(fileDir, 'data//socrata_assets.json')
 socrata_assets_json = os.path.abspath(os.path.realpath(filename))
-filename = os.path.join(fileDir, 'data\\doi_assets.json')
+filename = os.path.join(fileDir, 'data//doi_assets.json')
 doi_assets_json = os.path.abspath(os.path.realpath(filename))
 
 
@@ -93,7 +93,7 @@ def gather_doi_assets():
                     print(title, socrata_4x4)
                     doi_assets.to_json(doi_assets_json)
                 except StopIteration:
-                    print('{} does not exist'.format(title))
+                    print('{} title not found'.format(doi))
 
 
 def load_temp_table(temp_assets):

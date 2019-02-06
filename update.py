@@ -11,12 +11,14 @@ from diff_assets import *
 from update_doi import update_doi
 from publish_doi import *
 
+from extract_metadata import gather_doi_assets
+
 
 fileDir = os.path.dirname(os.path.realpath('__file__'))
-filename = os.path.join(fileDir, 'data\\socrata_assets.json')
+filename = os.path.join(fileDir, 'data//socrata_assets.json')
 socrata_assets_json = os.path.abspath(os.path.realpath(filename))
 
-filename = os.path.join(fileDir, 'data\\departments.json')
+filename = os.path.join(fileDir, 'data//departments.json')
 departments_json = os.path.abspath(os.path.realpath(filename))
 
 # parser = argparse.ArgumentParser(description='Update DataCite assets from socrata.')
@@ -102,31 +104,34 @@ def create_new():
 
 
 if __name__ == "__main__":
-
-    old_assets_df = pd.read_json(socrata_assets_json)
-    old_assets = old_assets_df.to_dict('records')
     assets = gather_socrata_assets()
-    atd_assets = []
-    for a in assets:
-        if a['department'] == 'Austin Transportation':
-            atd_assets.append(a)
-    assets_df = pd.DataFrame(atd_assets)
-    temp_table = load_temp_table(atd_assets)
-    # diff_df = find_changes(assets_df)
+    for asset in assets:
+        print(asset['name'])
 
-    for index, row in assets_df.iterrows():
-        # update static table request pulls from
-        update_static_table(assets, socrata_4x4=row['socrata_4x4'])
-        try:
-            success = update_doi(row['socrata_4x4'], temp_table=temp_table, draft=False)
-            if success is False:
-                # revert table if request fails
-                print('Update Failed')
-                update_static_table(old_assets, socrata_4x4=row['socrata_4x4'])
-            elif success is True:
-                print('Updated {}'.format(row['socrata_4x4']))
-        except ValueError:
-            # revert table if doi does not exist in table
-            print('Socrata asset {} does not exist in DOI table'.format(row['name']))
-            update_static_table(old_assets, socrata_4x4=row['socrata_4x4'])
+    # old_assets_df = pd.read_json(socrata_assets_json)
+    # old_assets = old_assets_df.to_dict('records')
+    # assets = gather_socrata_assets()
+    # atd_assets = []
+    # for a in assets:
+    #     if a['department'] == 'Austin Resource Recovery':
+    #         atd_assets.append(a)
+    # assets_df = pd.DataFrame(atd_assets)
+    # temp_table = load_temp_table(atd_assets)
+    # # diff_df = find_changes(assets_df)
+    #
+    # for index, row in assets_df.iterrows():
+    #     # update static table request pulls from
+    #     update_static_table(assets, socrata_4x4=row['socrata_4x4'])
+    #     try:
+    #         success = update_doi(row['socrata_4x4'], temp_table=temp_table, draft=False)
+    #         if success is False:
+    #             # revert table if request fails
+    #             print('Update Failed')
+    #             update_static_table(old_assets, socrata_4x4=row['socrata_4x4'])
+    #         elif success is True:
+    #             print('Updated {}'.format(row['socrata_4x4']))
+    #     except ValueError:
+    #         # revert table if doi does not exist in table
+    #         print('Socrata asset {} does not exist in DOI table'.format(row['name']))
+    #         update_static_table(old_assets, socrata_4x4=row['socrata_4x4'])
 

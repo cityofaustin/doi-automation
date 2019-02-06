@@ -10,10 +10,11 @@ import pandas as pd
 
 # from extract_metadata import gather_socrata_assets
 # from extract_metadata import update_static_table
+from extract_metadata import gather_doi_assets
 from publish_doi import assemble_payload
 
 fileDir = os.path.dirname(os.path.realpath('__file__'))
-filename = os.path.join(fileDir, 'data\\doi_assets.json')
+filename = os.path.join(fileDir, 'data//doi_assets.json')
 assets_filename = os.path.abspath(os.path.realpath(filename))
 
 

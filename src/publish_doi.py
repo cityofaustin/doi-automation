@@ -6,16 +6,16 @@ import pandas as pd
 
 
 fileDir = os.path.dirname(os.path.realpath('__file__'))
-filename = os.path.join(fileDir, 'data\\doi_assets.json')
+filename = os.path.join(fileDir, 'data//doi_assets.json')
 doi_assets_json = os.path.abspath(os.path.realpath(filename))
 
-filename = os.path.join(fileDir, 'data\\socrata_assets.json')
+filename = os.path.join(fileDir, 'data//socrata_assets.json')
 socrata_assets_json = os.path.abspath(os.path.realpath(filename))
 
-filename = os.path.join(fileDir, 'data\\departments.json')
+filename = os.path.join(fileDir, 'data//departments.json')
 departments_json = os.path.abspath(os.path.realpath(filename))
 
-filename = os.path.join(fileDir, 'data\\datacite-example.xml')
+filename = os.path.join(fileDir, 'data//datacite-example.xml')
 datacite_xml = os.path.abspath(os.path.realpath(filename))
 
 
