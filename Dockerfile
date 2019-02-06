@@ -5,6 +5,7 @@ FROM python:3.6
 
 #  Set the working directory
 WORKDIR /app
+ENV PYTHONPATH /app/src
 
 # Copy the current directory contents into the container at /app
 COPY . /app
