@@ -46,7 +46,6 @@ def gather_socrata_assets():
     return assets
 
 
-# TODO: figure out how to get ALL (including draft) datacite assets; pagination is occuring
 def gather_doi_assets():
     """Query DataCite for client DOIs and compare with socrata asset json"""
 

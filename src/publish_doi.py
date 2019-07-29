@@ -42,12 +42,16 @@ def assemble_payload(socrata_4x4, temp_table=None, draft=True, update=False):
         department_dois = doi_assets.loc[doi_assets['department'] == metadata['department'].item()]
         if len(department_dois) != 0:
             # add 1 to highest suffix value and use zfill to pad w/zeros to 6 chars
-            doi_suffix = str((department_dois['doi_suffix'].max()+1)).zfill(6)
+            doi_suffix = str(int(department_dois['doi_suffix'].max()+1)).zfill(6)
         else:
             # new doi for dept, start at 000001
             doi_suffix = str(1).zfill(6)
         # zfill dept prefix to 3 chars
-        doi = '10.26000/{}.{}'.format(str(dept_prefix.index[0]).zfill(3), doi_suffix)
+        try:
+            doi = '10.26000/{}.{}'.format(str(dept_prefix.index[0]).zfill(3), doi_suffix)
+        except IndexError:
+            # unknown or mispelled department names, eg "Parks and Recreaction"
+            doi = '10.26000/{}.{}'.format(str('43'.zfill(3)), doi_suffix)
     else:
         # find existing doi for update
         doi = doi_assets.loc[doi_assets['socrata_4x4'] == socrata_4x4]['doi'].item()
@@ -134,7 +138,7 @@ def assemble_xml(metadata, doi):
 
 
 def publish_doi(socrata_4x4, temp_table=None, draft=True):
-    """Publishes DOI, encodes XML into base64 and inserts DOI record into postgres"""
+    """Publishes DOI, encodes XML into base64 and inserts DOI record into json"""
     import requests
 
     doi_assets = pd.read_json(doi_assets_json)
